@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Realtime Chat</title>
+</head>
+<body>
+  <h2>Realtime Chat</h2>
+
+  <input id="msg" placeholder="Type message" />
+  <button onclick="send()">Send</button>
+
+  <ul id="messages"></ul>
+
+  <!-- Socket.IO client -->
+  <script src="/socket.io/socket.io.js"></script>
+
+  <script>
+    const socket = io();
+
+    socket.on("connect", () => {
+      console.log("🟢 Connected to server");
+    });
+// Listen incoming messages
+    socket.on("message", (msg) => {
+      const li = document.createElement("li");
+      li.innerText = msg;
+      document.getElementById("messages").appendChild(li);
+    });
+// Sending message to server
+    function send() {
+      const msg = document.getElementById("msg").value;
+      socket.emit("message", msg);
+      document.getElementById("msg").value = "";
+    }
+  </script>
+</body>
+</html>
+
+
+<!-- message flow
+ Tab 1 → Send "Hello"
+   ↓
+Server receives message
+   ↓
+Server broadcasts message
+   ↓
+Tab 1 receives
+Tab 2 receives
+ -->
